@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>一番くじ シミュレーター&期待値ツール</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+    <body>
+        <header>一番くじ シミュレーター&期待値ツール</header>
+        <div>
+            <h1>使い方</h1>
+            <ol>
+                <li>データをセットします．対象の一番くじの景品と数を入力してください．</li>
+                <li>調べたい方法を選択してください．</li>
+            </ol>
+        </div>
+        <div class="table">
+            <button onclick="add()">行追加</button>
+            <button onclick="del()">行削除</button>
+            <button onclick="getTableData()">データセット</button>
+            <button onclick="showData()">データ表示</button>
+            <table id="tbl" border="2" style="border-collapse: collapse;">
+                <tr>
+                    <th>○○賞</th>
+                    <th>個数</th>
+                </tr>
+            </table>
+        </div>
+        <div class="tab">
+            <ul class="tab-menu">
+                <li class="tab-menu-item is-active" data-tab="01">シミュレーター</li> 
+                <li class="tab-menu-item" data-tab="02">回数から期待値計算</li>
+                <li class="tab-menu-item" data-tab="03">期待値から回数計算</li>
+            </ul>
+            <div class="tab-panel">
+                <div class="tab-panel-box tab-panel-box001 is-show" data-panel="01">
+                    <p class="tab-panel-text">シミュ</p>
+                    <div id="selectBoxContainer_prize"></div>
+                    <div id="selectBoxContainer_num"></div>
+                    <button onclick="simu()">シミュ</button>
+                </div>
+                <div class="tab-panel-box tab-panel-box002" data-panel="02">
+                    <p class="tab-panel-text">回数から期待値</p>
+                    <button onclick="exp()">期待値</button>
+                </div>
+                <div class="tab-panel-box tab-panel-box003" data-panel="03">
+                    <p class="tab-panel-text">期待値から回数</p>
+                    <button onclick="num()">回数</button>
+                </div>
+            </div>
+        </div>
+        <script src="main.js"></script>
+    </body>
+</html>
