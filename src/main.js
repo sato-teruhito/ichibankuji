@@ -44,6 +44,7 @@
 }
 
 let data = []
+let simuData = []
 
 //行追加
 function add() {
@@ -84,32 +85,6 @@ function getTableData() {
     //idでhtmlからtblの要素を取得し，trタグのNodeListを取得
     let tbl = document.getElementById("tbl");
     let tbl_tr = tbl.querySelectorAll("tr");
-    //テーブルの1行(trタグ)毎に処理
-    /* tbl_tr.forEach(function(tr) {
-        //tdタグのNodeListを取得
-        let cells = tr.querySelectorAll('td');
-        //テーブルのヘッダー部分は飛ばす
-        if (cells.length != 0) {
-            //テーブルの1行(trタグ)のデータを格納する配列
-            let d = [];
-            //セル(tdタグ)毎に処理
-            cells.forEach(function(td){
-                //セルがinputタグだった場合
-                if(td.innerHTML.indexOf('input') != -1) {
-                    d.push(td.firstElementChild.value);
-                }
-                //セルがtextだった場合
-                else if(td.textContent!=""){
-                    d.push(td.textContent);
-                }
-                //セルが空白だった場合
-                else{
-                    d.push("");
-                }
-            });
-            data.push(d);
-        }
-    }); */
     
     tbl_tr.forEach(function(tr, rowIndex) {
         const cells = tr.querySelectorAll('td');
@@ -142,6 +117,8 @@ function getTableData() {
     });
 
     console.log(data);
+    makeSimuTable();//データセット後にシミュレーター用の表作成
+    setSimuData();//データセット後にシミュレーター用の配列作成
     createSelectBox_prize2(); //データセット後に個数セレクトボックス2生成
     createSelectBox_num2(); //データセット後に景品セレクトボックス2生成
     createSelectBox_prize3(); //データセット後に個数セレクトボックス3生成
@@ -188,7 +165,7 @@ function createSelectBox_prize2() {
     }
 }
 
-//セレクトボックス生成(個数)
+//セレクトボックス生成2(個数)
 function createSelectBox_num2() {
     let container = document.getElementById('selectBoxContainer_num2');
     container.innerHTML = ''; // 既存のコンテンツをクリア
@@ -256,7 +233,7 @@ function createSelectBox_prize3() {
     }
 }
 
-//セレクトボックス生成(個数)
+//セレクトボックス生成3(個数)
 function createSelectBox_num3() {
     let container = document.getElementById('selectBoxContainer_num3');
     container.innerHTML = ''; // 既存のコンテンツをクリア
@@ -289,9 +266,100 @@ function createSelectBox_num3() {
     container.appendChild(select);
 }
 
-//シミュレーター
-function simu() {
+//シミュレーター用のデータの表作成
+function makeSimuTable() {
+
+    // テーブルのtbodyを取得
+    let table = document.getElementById('tbl_simu');
+    //テーブル初期化
+    table.innerHTML = ''; 
+
+    const headerRow = document.createElement('tr');
+    const header1 = document.createElement('th');
+    header1.textContent = '○○賞';  // ヘッダー1
+    const header2 = document.createElement('th');
+    header2.textContent = '残り個数';  // ヘッダー2
+    headerRow.appendChild(header1);
+    headerRow.appendChild(header2);
+    table.appendChild(headerRow);  // テーブルにヘッダー行を追加
+
+    // 配列データをテーブルに追加
+    data.forEach(([name, quantity]) => {
+        const row = document.createElement('tr'); // 行を作成
     
+        // 商品名のセル
+        const nameCell = document.createElement('td');
+        nameCell.textContent = name;
+        row.appendChild(nameCell);
+    
+        // 残り個数のセル
+        const quantityCell = document.createElement('td');
+        quantityCell.textContent = quantity;
+        quantityCell.type = Number(quantity);
+        quantityCell.setAttribute('data-name', name);  // 商品名をクラス名として追加
+        row.appendChild(quantityCell);
+    
+        // 行をテーブルに追加
+        table.appendChild(row);
+    });
+  
+}
+
+//シミュレーター用のデータの配列（データセット後と，シミュリセット時に実行）
+function setSimuData() {
+    simuData = [];
+    //console.log(data);
+    //console.log(simuData);
+    
+    data.forEach(([item, count]) => {
+        for (let i = 0; i < count; i++) {
+            simuData.push(item);
+        }
+    });
+    console.log(simuData);
+    return simuData;
+}
+
+//シミュレーター実行
+function simu() {    
+    let randomIndex = Math.floor(Math.random() * simuData.length);
+    let randomValue = simuData[randomIndex];
+
+    // 結果を表示
+    document.getElementById("simuResult").value = randomValue;
+
+    // 選択された値を配列から削除
+    simuData.splice(randomIndex, 1);
+
+    console.log("Remaining Simulation Data:", simuData);
+
+    //テーブルから，出た商品名の残り数を-1
+    delSimuTable(randomValue);
+
+    // すべてのデータが使用された場合の処理
+    if (simuData.length === 0) {
+        console.log("すべてのデータが使用されました。");
+    }
+}
+
+//シミュレーター用のテーブルの値を減らす関数
+function delSimuTable(tagName) {
+    // data-name 属性が tagName に該当する <td> 要素を取得
+    const targetTd = document.querySelector(`td[data-name='${tagName}']`);
+    
+    // 該当する <td> 要素が存在する場合
+    if (targetTd) {
+        // 現在の値を数値に変換して取得
+        let currentValue = Number(targetTd.textContent);
+        
+        // 値を -1 する
+        currentValue -= 1;
+
+        // 更新された値を <td> のテキストコンテンツに設定
+        targetTd.textContent = currentValue;
+    } else {
+        console.error(`タグ名 "${tagName}" に該当する要素が見つかりません。`);
+    }
 }
 
 //回数から期待値計算

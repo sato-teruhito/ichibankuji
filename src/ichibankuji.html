@@ -34,8 +34,11 @@
             </ul>
             <div class="tab-panel">
                 <div class="tab-panel-box tab-panel-box001 is-show" data-panel="01">
-                    <p class="tab-panel-text">シミュ</p>
+                    <p class="tab-panel-text"></p>
+                    <table id="tbl_simu" border="2" style="border-collapse: collapse;"></table>
+                    <input type="text" id="simuResult"></input>
                     <button onclick="simu()">シミュ</button>
+                    <button onclick="setSimuData();makeSimuTable()">リセット</button>
                 </div>
                 <div class="tab-panel-box tab-panel-box002" data-panel="02">
                     <p class="tab-panel-text">回数から期待値</p>
