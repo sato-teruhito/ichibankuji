@@ -156,19 +156,19 @@ function createSelectBox_num() {
     let select0 = document.getElementById('prizeSelect_prize');
     let selectedIndex = select0.value;
 
+    // セレクトボックスを作成
+    let select = document.createElement('select');
+    select.id = 'prizeSelect_num';
+
+    // デフォルトのオプションを追加
+    let defaultOption = document.createElement('option');
+    defaultOption.text = '個数を選択してください';
+    defaultOption.value = '';
+    select.appendChild(defaultOption);
+        
+    //商品の選択をしていた場合，対応する個数の選択肢を出す．
     if (selectedIndex !== '' && data[selectedIndex] && data[selectedIndex].length > 1) {
         let maxNumber = parseInt(data[selectedIndex][1]);
-
-        // セレクトボックスを作成
-        let select = document.createElement('select');
-        select.id = 'prizeSelect_num';
-
-        // デフォルトのオプションを追加
-        let defaultOption = document.createElement('option');
-        defaultOption.text = '個数を選択してください';
-        defaultOption.value = '';
-        select.appendChild(defaultOption);
-
         // 0からmaxNumberまでのオプションを作成
         for (let i = 0; i <= maxNumber; i++) {
             let option = document.createElement('option');
@@ -176,13 +176,10 @@ function createSelectBox_num() {
             option.text = i.toString();
             select.appendChild(option);
         }
-
-        // セレクトボックスをコンテナに追加
-        container.appendChild(select);
-    } else {
-        container.textContent = "景品を選択してください。";
     }
-}
+    // セレクトボックスをコンテナに追加
+    container.appendChild(select);
+} 
 
 //シミュレーター
 function simu() {
