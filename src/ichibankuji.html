@@ -19,7 +19,7 @@
             <button onclick="del()">行削除</button>
             <button onclick="getTableData()">データセット</button>
             <button onclick="showData()">データ表示</button>
-            <table id="tbl" border="2" style="border-collapse: collapse;">
+            <table id="tbl" align="center" border="2" style="border-collapse: collapse;">
                 <tr>
                     <th>○○賞</th>
                     <th>個数</th>
@@ -35,10 +35,15 @@
             <div class="tab-panel">
                 <div class="tab-panel-box tab-panel-box001 is-show" data-panel="01">
                     <p class="tab-panel-text"></p>
-                    <table id="tbl_simu" border="2" style="border-collapse: collapse;"></table>
-                    <input type="text" id="simuResult"></input>
-                    <button onclick="simu()">シミュ</button>
-                    <button onclick="setSimuData();makeSimuTable()">リセット</button>
+                    <table id="tbl_simu" align="center" border="3" style="border-collapse: collapse;"></table>
+                    <p>ボタンを押すと１回くじを引けるよ！</p>
+                    <p id="resultText">
+                        <span>今回あたったのは</span>
+                        <span id="simuResult"></span>
+                        <span>賞です。 おめでとう！</span>
+                    </p>
+                    <button id="simu" onclick="simu()">シミュ</button>
+                    <button onclick="setSimuData();makeSimuTable();simu_buttonShow();resultText_hidden()">リセット</button>
                 </div>
                 <div class="tab-panel-box tab-panel-box002" data-panel="02">
                     <p class="tab-panel-text">回数から期待値</p>

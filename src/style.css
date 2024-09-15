@@ -27,6 +27,10 @@ body {
     text-align: center;
 }
 
+#tbl {
+    margin-top: 20px;
+}
+
 .tab {
     max-width: 800px;
     margin: 0 auto;
@@ -76,6 +80,7 @@ body {
     min-height: 400px; /* テキスト量が多くなっても対応できるように */
     padding: 10px 30px;
     border-radius: 10px;
+    text-align: center;
 }
    
 .tab-panel-box001 {
@@ -98,3 +103,13 @@ body {
     display: block;
 }
 
+#tbl_simu {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+#resultText {
+    visibility: hidden;
+}

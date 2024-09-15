@@ -117,6 +117,7 @@ function getTableData() {
     });
 
     console.log(data);
+    //tabShow();////データセット後にタブ表示
     makeSimuTable();//データセット後にシミュレーター用の表作成
     setSimuData();//データセット後にシミュレーター用の配列作成
     createSelectBox_prize2(); //データセット後に個数セレクトボックス2生成
@@ -125,6 +126,11 @@ function getTableData() {
     createSelectBox_num3(); //データセット後に景品セレクトボックス3生成
     return data;
 }
+
+/* function tabShow(){
+    const show = document.getElementsByClassName('tab');
+    show.style.visibility = 'visible';
+} */
 
 function showData() {
     console.log(data);
@@ -279,8 +285,11 @@ function makeSimuTable() {
     header1.textContent = '○○賞';  // ヘッダー1
     const header2 = document.createElement('th');
     header2.textContent = '残り個数';  // ヘッダー2
+    const header3 = document.createElement('th');
+    header3.textContent = '当たり個数'; //ヘッダー3
     headerRow.appendChild(header1);
     headerRow.appendChild(header2);
+    headerRow.appendChild(header3);
     table.appendChild(headerRow);  // テーブルにヘッダー行を追加
 
     // 配列データをテーブルに追加
@@ -298,6 +307,13 @@ function makeSimuTable() {
         quantityCell.type = Number(quantity);
         quantityCell.setAttribute('data-name', name);  // 商品名をクラス名として追加
         row.appendChild(quantityCell);
+
+        // 当たり個数のセル
+        const getCell = document.createElement('td');
+        getCell.textContent = 0;
+        getCell.type = Number(quantity);
+        getCell.setAttribute('data-name', name+1);  // 商品名をクラス名として追加
+        row.appendChild(getCell);
     
         // 行をテーブルに追加
         table.appendChild(row);
@@ -320,29 +336,54 @@ function setSimuData() {
     return simuData;
 }
 
+function simu_buttonShow() {
+    // ボタンを取得
+    let button_simu = document.getElementById('simu');
+    // ボタンを表示にする
+    button_simu.style.visibility = 'visible';
+}
+
+function resultText_hidden() {
+    let resultText = document.getElementById("resultText");
+    resultText.style.visibility = 'hidden';
+}
+
 //シミュレーター実行
 function simu() {    
-    let randomIndex = Math.floor(Math.random() * simuData.length);
-    let randomValue = simuData[randomIndex];
+    if (simuData.length !== 0) {
+        let randomIndex = Math.floor(Math.random() * simuData.length);
+        let randomValue = simuData[randomIndex];
 
-    // 結果を表示
-    document.getElementById("simuResult").value = randomValue;
+        // 結果を表示
+        let resultText = document.getElementById("resultText");
+        resultText.style.visibility = 'visible';
+        let result = document.getElementById("simuResult");
+        result.textContent = randomValue;
 
-    // 選択された値を配列から削除
-    simuData.splice(randomIndex, 1);
+        // 選択された値を配列から削除
+        simuData.splice(randomIndex, 1);
 
-    console.log("Remaining Simulation Data:", simuData);
+        console.log("Remaining Simulation Data:", simuData);
 
-    //テーブルから，出た商品名の残り数を-1
-    delSimuTable(randomValue);
+        //テーブルから，出た商品名の残り数を-1
+        delSimuTable(randomValue);
+        //テーブルから，出た商品名の当たり数を+1
+        addSimuTable(randomValue);
 
-    // すべてのデータが使用された場合の処理
-    if (simuData.length === 0) {
-        console.log("すべてのデータが使用されました。");
+        // すべてのデータが使用された場合の処理
+        if (simuData.length === 0) {
+            console.log("すべてのデータが使用されました。");
+            // ボタンを取得
+            let button_simu = document.getElementById('simu');
+            // ボタンを非表示にする
+            button_simu.style.visibility = 'hidden';
+        }
+    } else {
+        alert("データをセットしてください。");
     }
 }
 
-//シミュレーター用のテーブルの値を減らす関数
+//シミュレーター用のテーブルの残り個数を減らす関数
 function delSimuTable(tagName) {
     // data-name 属性が tagName に該当する <td> 要素を取得
     const targetTd = document.querySelector(`td[data-name='${tagName}']`);
@@ -354,6 +395,27 @@ function delSimuTable(tagName) {
         
         // 値を -1 する
         currentValue -= 1;
+
+        // 更新された値を <td> のテキストコンテンツに設定
+        targetTd.textContent = currentValue;
+    } else {
+        console.error(`タグ名 "${tagName}" に該当する要素が見つかりません。`);
+    }
+}
+
+//シミュレーター用のテーブルの当たった個数を増やす関数
+
+function addSimuTable(tagName) {
+    // data-name 属性が tagName に該当する <td> 要素を取得
+    const targetTd = document.querySelector(`td[data-name='${tagName+1}']`);
+    
+    // 該当する <td> 要素が存在する場合
+    if (targetTd) {
+        // 現在の値を数値に変換して取得
+        let currentValue = Number(targetTd.textContent);
+        
+        // 値を -1 する
+        currentValue += 1;
 
         // 更新された値を <td> のテキストコンテンツに設定
         targetTd.textContent = currentValue;
