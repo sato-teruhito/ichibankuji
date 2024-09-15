@@ -515,39 +515,6 @@ function createSelectBox_prize3() {
     }
 }
 
-//セレクトボックス生成3(個数)
-/* function createSelectBox_num3() {
-    let container = document.getElementById('selectBoxContainer_num3');
-    container.innerHTML = ''; // 既存のコンテンツをクリア
-
-    let select0 = document.getElementById('prizeSelect_prize3');
-    let selectedIndex = select0.value;
-
-    // セレクトボックスを作成
-    let select = document.createElement('select');
-    select.id = 'prizeSelect_num3';
-
-    // デフォルトのオプションを追加
-    let defaultOption = document.createElement('option');
-    defaultOption.text = '個数を選択してください';
-    defaultOption.value = '';
-    select.appendChild(defaultOption);
-        
-    //商品の選択をしていた場合，対応する個数の選択肢を出す．
-    if (selectedIndex !== '' && data[selectedIndex] && data[selectedIndex].length > 1) {
-        let maxNumber = parseInt(data[selectedIndex][1]);
-        // 0からmaxNumberまでのオプションを作成
-        for (let i = 0; i <= maxNumber; i++) {
-            let option = document.createElement('option');
-            option.value = i;
-            option.text = i.toString();
-            select.appendChild(option);
-        }
-    }
-    // セレクトボックスをコンテナに追加
-    container.appendChild(select);
-} */
-
 //セレクトボックス生成3(回数)
 function createSelectBox_num3() {
     let container = document.getElementById('selectBoxContainer_num3');
