@@ -29,6 +29,7 @@ body {
 
 #tbl {
     margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .tab {
@@ -110,6 +111,28 @@ body {
     text-align: center;
 }
 
-#resultText {
+#tbl_calc2 {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+#tbl_calc3 {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+#resultText1 {
+    visibility: hidden;
+}
+
+#resultText2 {
+    visibility: hidden;
+}
+
+#resultText3 {
     visibility: hidden;
 }

@@ -45,6 +45,7 @@
 
 let data = []
 let simuData = []
+let sum = 0;
 
 //行追加
 function add() {
@@ -62,6 +63,7 @@ function add() {
     let td_n = document.createElement("td");
     let inp_n = document.createElement("input");
     inp_n.type = "number";
+    inp_n.min = 1;
     td_n.appendChild(inp_n);
     tr.appendChild(td_n);
 
@@ -82,6 +84,7 @@ function del() {
 //データセット取得
 function getTableData() {
     data = [];
+    sum = 0;
     //idでhtmlからtblの要素を取得し，trタグのNodeListを取得
     let tbl = document.getElementById("tbl");
     let tbl_tr = tbl.querySelectorAll("tr");
@@ -109,17 +112,22 @@ function getTableData() {
                     if (isNaN(numberValue)) {
                         throw new Error(`Invalid number in row ${rowIndex + 1}, column 2: "${cellValue}"`);
                     }
+                    sum += numberValue;
                     d.push(numberValue);
                 }
             });
             data.push(d);
         }
     });
-
     console.log(data);
+    console.log(sum);
     //tabShow();////データセット後にタブ表示
     makeSimuTable();//データセット後にシミュレーター用の表作成
     setSimuData();//データセット後にシミュレーター用の配列作成
+    makeCalcTable2()//データセット後に計算用の表作成
+    resultText2_hidden()
+    resultText3_hidden()
+    makeCalcTable3()//データセット後に計算用の表作成
     createSelectBox_prize2(); //データセット後に個数セレクトボックス2生成
     createSelectBox_num2(); //データセット後に景品セレクトボックス2生成
     createSelectBox_prize3(); //データセット後に個数セレクトボックス3生成
@@ -134,189 +142,54 @@ function getTableData() {
 
 function showData() {
     console.log(data);
-}
-
-//セレクトボックス生成2(○○賞名)
-function createSelectBox_prize2() {
-    let container = document.getElementById('selectBoxContainer_prize2');
-    container.innerHTML = ''; // 既存のコンテンツをクリア
-
-    // セレクトボックスを作成
-    let select = document.createElement('select');
-    select.id = 'prizeSelect_prize2';
-
-    // データが存在することを確認
-    if (data && data.length > 0) {
-        // デフォルトのオプションを追加
-        let defaultOption = document.createElement('option');
-        defaultOption.text = '景品を選択してください';
-        defaultOption.value = '';
-        select.appendChild(defaultOption);
-
-        // データの各要素に対してオプションを作成
-        data.forEach((item, index) => {
-            if (item && item.length > 0) {
-                let option = document.createElement('option');
-                option.value = index;
-                option.text = item[0];
-                select.appendChild(option);
-            }
-        });
-
-        // セレクトボックスをコンテナに追加
-        container.appendChild(select);
-        select.addEventListener('change', createSelectBox_num2);
-    } else {
-        container.textContent = "データがセットされていません。";
-    }
-}
-
-//セレクトボックス生成2(個数)
-function createSelectBox_num2() {
-    let container = document.getElementById('selectBoxContainer_num2');
-    container.innerHTML = ''; // 既存のコンテンツをクリア
-
-    let select0 = document.getElementById('prizeSelect_prize2');
-    let selectedIndex = select0.value;
-
-    // セレクトボックスを作成
-    let select = document.createElement('select');
-    select.id = 'prizeSelect_num2';
-
-    // デフォルトのオプションを追加
-    let defaultOption = document.createElement('option');
-    defaultOption.text = '個数を選択してください';
-    defaultOption.value = '';
-    select.appendChild(defaultOption);
-        
-    //商品の選択をしていた場合，対応する個数の選択肢を出す．
-    if (selectedIndex !== '' && data[selectedIndex] && data[selectedIndex].length > 1) {
-        let maxNumber = parseInt(data[selectedIndex][1]);
-        // 0からmaxNumberまでのオプションを作成
-        for (let i = 0; i <= maxNumber; i++) {
-            let option = document.createElement('option');
-            option.value = i;
-            option.text = i.toString();
-            select.appendChild(option);
-        }
-    }
-    // セレクトボックスをコンテナに追加
-    container.appendChild(select);
-}
-
-//セレクトボックス生成3(○○賞名)
-function createSelectBox_prize3() {
-    let container = document.getElementById('selectBoxContainer_prize3');
-    container.innerHTML = ''; // 既存のコンテンツをクリア
-
-    // セレクトボックスを作成
-    let select = document.createElement('select');
-    select.id = 'prizeSelect_prize3';
-
-    // データが存在することを確認
-    if (data && data.length > 0) {
-        // デフォルトのオプションを追加
-        let defaultOption = document.createElement('option');
-        defaultOption.text = '景品を選択してください';
-        defaultOption.value = '';
-        select.appendChild(defaultOption);
-
-        // データの各要素に対してオプションを作成
-        data.forEach((item, index) => {
-            if (item && item.length > 0) {
-                let option = document.createElement('option');
-                option.value = index;
-                option.text = item[0];
-                select.appendChild(option);
-            }
-        });
-
-        // セレクトボックスをコンテナに追加
-        container.appendChild(select);
-        select.addEventListener('change', createSelectBox_num3);
-    } else {
-        container.textContent = "データがセットされていません。";
-    }
-}
-
-//セレクトボックス生成3(個数)
-function createSelectBox_num3() {
-    let container = document.getElementById('selectBoxContainer_num3');
-    container.innerHTML = ''; // 既存のコンテンツをクリア
-
-    let select0 = document.getElementById('prizeSelect_prize3');
-    let selectedIndex = select0.value;
-
-    // セレクトボックスを作成
-    let select = document.createElement('select');
-    select.id = 'prizeSelect_num3';
-
-    // デフォルトのオプションを追加
-    let defaultOption = document.createElement('option');
-    defaultOption.text = '個数を選択してください';
-    defaultOption.value = '';
-    select.appendChild(defaultOption);
-        
-    //商品の選択をしていた場合，対応する個数の選択肢を出す．
-    if (selectedIndex !== '' && data[selectedIndex] && data[selectedIndex].length > 1) {
-        let maxNumber = parseInt(data[selectedIndex][1]);
-        // 0からmaxNumberまでのオプションを作成
-        for (let i = 0; i <= maxNumber; i++) {
-            let option = document.createElement('option');
-            option.value = i;
-            option.text = i.toString();
-            select.appendChild(option);
-        }
-    }
-    // セレクトボックスをコンテナに追加
-    container.appendChild(select);
+    console.log(sum);
 }
 
 //シミュレーター用のデータの表作成
 function makeSimuTable() {
 
     // テーブルのtbodyを取得
-    let table = document.getElementById('tbl_simu');
+    let table_1 = document.getElementById('tbl_simu');
     //テーブル初期化
-    table.innerHTML = ''; 
+    table_1.innerHTML = ''; 
 
-    const headerRow = document.createElement('tr');
-    const header1 = document.createElement('th');
-    header1.textContent = '○○賞';  // ヘッダー1
-    const header2 = document.createElement('th');
-    header2.textContent = '残り個数';  // ヘッダー2
-    const header3 = document.createElement('th');
-    header3.textContent = '当たり個数'; //ヘッダー3
-    headerRow.appendChild(header1);
-    headerRow.appendChild(header2);
-    headerRow.appendChild(header3);
-    table.appendChild(headerRow);  // テーブルにヘッダー行を追加
+    const headerRow_1 = document.createElement('tr');
+    const header1_1 = document.createElement('th');
+    header1_1.textContent = '○○賞';  // ヘッダー1
+    const header2_1 = document.createElement('th');
+    header2_1.textContent = '残り個数';  // ヘッダー2
+    const header3_1 = document.createElement('th');
+    header3_1.textContent = '当たり個数'; //ヘッダー3
+    headerRow_1.appendChild(header1_1);
+    headerRow_1.appendChild(header2_1);
+    headerRow_1.appendChild(header3_1);
+    table_1.appendChild(headerRow_1);  // テーブルにヘッダー行を追加
 
     // 配列データをテーブルに追加
     data.forEach(([name, quantity]) => {
-        const row = document.createElement('tr'); // 行を作成
+        const row_1 = document.createElement('tr'); // 行を作成
     
         // 商品名のセル
-        const nameCell = document.createElement('td');
-        nameCell.textContent = name;
-        row.appendChild(nameCell);
+        const nameCell_1 = document.createElement('td');
+        nameCell_1.textContent = name;
+        row_1.appendChild(nameCell_1);
     
         // 残り個数のセル
-        const quantityCell = document.createElement('td');
-        quantityCell.textContent = quantity;
-        quantityCell.type = Number(quantity);
-        quantityCell.setAttribute('data-name', name);  // 商品名をクラス名として追加
-        row.appendChild(quantityCell);
+        const quantityCell_1 = document.createElement('td');
+        quantityCell_1.textContent = quantity;
+        quantityCell_1.type = Number(quantity);
+        quantityCell_1.setAttribute('data-name', name);  // 商品名をクラス名として追加
+        row_1.appendChild(quantityCell_1);
 
         // 当たり個数のセル
         const getCell = document.createElement('td');
         getCell.textContent = 0;
         getCell.type = Number(quantity);
         getCell.setAttribute('data-name', name+1);  // 商品名をクラス名として追加
-        row.appendChild(getCell);
+        row_1.appendChild(getCell);
     
         // 行をテーブルに追加
-        table.appendChild(row);
+        table_1.appendChild(row_1);
     });
   
 }
@@ -343,9 +216,9 @@ function simu_buttonShow() {
     button_simu.style.visibility = 'visible';
 }
 
-function resultText_hidden() {
-    let resultText = document.getElementById("resultText");
-    resultText.style.visibility = 'hidden';
+function resultText1_hidden() {
+    let resultText1 = document.getElementById("resultText1");
+    resultText1.style.visibility = 'hidden';
 }
 
 //シミュレーター実行
@@ -355,10 +228,10 @@ function simu() {
         let randomValue = simuData[randomIndex];
 
         // 結果を表示
-        let resultText = document.getElementById("resultText");
-        resultText.style.visibility = 'visible';
-        let result = document.getElementById("simuResult");
-        result.textContent = randomValue;
+        let resultText1 = document.getElementById("resultText1");
+        resultText1.style.visibility = 'visible';
+        let simu_result = document.getElementById("simuResult");
+        simu_result.textContent = randomValue;
 
         // 選択された値を配列から削除
         simuData.splice(randomIndex, 1);
@@ -424,14 +297,336 @@ function addSimuTable(tagName) {
     }
 }
 
+//計算用の表作成
+function makeCalcTable2() {
+
+    // テーブルのtbodyを取得
+    let table_2 = document.getElementById('tbl_calc2');
+    //テーブル初期化
+    table_2.innerHTML = ''; 
+
+    const headerRow_2 = document.createElement('tr');
+    const header1_2 = document.createElement('th');
+    header1_2.textContent = '○○賞';  // ヘッダー1
+    const header2_2 = document.createElement('th');
+    header2_2.textContent = '残り個数';  // ヘッダー2
+    headerRow_2.appendChild(header1_2);
+    headerRow_2.appendChild(header2_2);
+    table_2.appendChild(headerRow_2);  // テーブルにヘッダー行を追加
+
+    // 配列データをテーブルに追加
+    data.forEach(([name, quantity]) => {
+        const row_2 = document.createElement('tr'); // 行を作成
+    
+        // 商品名のセル
+        const nameCell_2 = document.createElement('td');
+        nameCell_2.textContent = name;
+        row_2.appendChild(nameCell_2);
+    
+        // 残り個数のセル
+        const quantityCell_2 = document.createElement('td');
+        quantityCell_2.textContent = quantity;
+        quantityCell_2.type = Number(quantity);
+        quantityCell_2.setAttribute('data-name', name+2);  // 商品名をクラス名として追加
+        row_2.appendChild(quantityCell_2);
+
+        // 行をテーブルに追加
+        table_2.appendChild(row_2);
+    });
+}
+
+//セレクトボックス生成2(○○賞名)
+function createSelectBox_prize2() {
+    let container = document.getElementById('selectBoxContainer_prize2');
+    container.innerHTML = ''; // 既存のコンテンツをクリア
+
+    // セレクトボックスを作成
+    let select = document.createElement('select');
+    select.id = 'prizeSelect_prize2';
+
+    // データが存在することを確認
+    if (data && data.length > 0) {
+        // デフォルトのオプションを追加
+        let defaultOption = document.createElement('option');
+        defaultOption.text = '景品を選択してください';
+        defaultOption.value = '';
+        select.appendChild(defaultOption);
+
+        // データの各要素に対してオプションを作成
+        data.forEach((item, index) => {
+            if (item && item.length > 0) {
+                let option = document.createElement('option');
+                option.value = index;
+                option.text = item[0];
+                select.appendChild(option);
+            }
+        });
+
+        // セレクトボックスをコンテナに追加
+        container.appendChild(select);
+        select.addEventListener('change', createSelectBox_num2);
+    } else {
+        container.textContent = "データがセットされていません。";
+    }
+}
+
+//セレクトボックス生成2(回数)
+function createSelectBox_num2() {
+    let container = document.getElementById('selectBoxContainer_num2');
+    container.innerHTML = ''; // 既存のコンテンツをクリア
+
+    let select0 = document.getElementById('prizeSelect_prize2');
+    let selectedIndex = select0.value;
+
+    // セレクトボックスを作成
+    let select = document.createElement('select');
+    select.id = 'prizeSelect_num2';
+
+    // デフォルトのオプションを追加
+    let defaultOption = document.createElement('option');
+    defaultOption.text = '回数を選択してください';
+    defaultOption.value = '';
+    select.appendChild(defaultOption);
+        
+    //商品の選択をしていた場合，対応する回数の選択肢を出す．
+    if (selectedIndex !== '' && data[selectedIndex] && data[selectedIndex].length > 1) {
+        let maxNumber = sum;
+        // 0からmaxNumberまでのオプションを作成
+        for (let i = 1; i <= maxNumber; i++) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.text = i.toString();
+            select.appendChild(option);
+        }
+    }
+    // セレクトボックスをコンテナに追加
+    container.appendChild(select);
+}
+
 //回数から期待値計算
 function exp() {
+    if (data.length !== 0) {
+        //引く回数取得
+        let times2 = document.getElementById('prizeSelect_num2').selectedIndex;
+        console.log(times2);
+        
+        //選択した商品名取得
+        let prize2 = document.getElementById('prizeSelect_prize2').selectedIndex;
+        let prizeName2 = document.getElementById('prizeSelect_prize2').options[prize2].textContent;
+        console.log(prizeName2);
+        
+        //選択した商品の個数を取得
+        let prizeTd2 = document.querySelector(`td[data-name='${prizeName2+2}']`);
+        let numPrize2 = Number(prizeTd2.textContent);
+        console.log(numPrize2);
 
+        //計算
+        let x = 1;
+        for (let i = 0; i < times2; i++) {
+            x *= (sum - numPrize2 - i) / (sum - i)
+        }
+        console.log(x);
+        
+        //結果表示
+        let resultText2 = document.getElementById("resultText2");
+        resultText2.style.visibility = 'visible';
+        let exp_result = document.getElementById("expResult");
+        exp_result.textContent = (1 - x) * 100;
+    } else {
+        alert("データをセットしてください。");
+    }
+}
+
+function resultText2_hidden() {
+    let resultText2 = document.getElementById("resultText2");
+    resultText2.style.visibility = 'hidden';
+}
+
+//計算用の表作成
+function makeCalcTable3() {
+
+    // テーブルのtbodyを取得
+    let table_3 = document.getElementById('tbl_calc3');
+    //テーブル初期化
+    table_3.innerHTML = ''; 
+
+    const headerRow_3 = document.createElement('tr');
+    const header1_3 = document.createElement('th');
+    header1_3.textContent = '○○賞';  // ヘッダー1
+    const header2_3 = document.createElement('th');
+    header2_3.textContent = '残り個数';  // ヘッダー2
+    headerRow_3.appendChild(header1_3);
+    headerRow_3.appendChild(header2_3);
+    table_3.appendChild(headerRow_3);  // テーブルにヘッダー行を追加
+
+    // 配列データをテーブルに追加
+    data.forEach(([name, quantity]) => {
+        const row_3 = document.createElement('tr'); // 行を作成
+    
+        // 商品名のセル
+        const nameCell_3 = document.createElement('td');
+        nameCell_3.textContent = name;
+        row_3.appendChild(nameCell_3);
+    
+        // 残り個数のセル
+        const quantityCell_3 = document.createElement('td');
+        quantityCell_3.textContent = quantity;
+        quantityCell_3.type = Number(quantity);
+        quantityCell_3.setAttribute('data-name', name+3);  // 商品名をクラス名として追加
+        row_3.appendChild(quantityCell_3);
+
+        // 行をテーブルに追加
+        table_3.appendChild(row_3);
+    });
+}
+
+//セレクトボックス生成3(○○賞名)
+function createSelectBox_prize3() {
+    let container = document.getElementById('selectBoxContainer_prize3');
+    container.innerHTML = ''; // 既存のコンテンツをクリア
+
+    // セレクトボックスを作成
+    let select = document.createElement('select');
+    select.id = 'prizeSelect_prize3';
+
+    // データが存在することを確認
+    if (data && data.length > 0) {
+        // デフォルトのオプションを追加
+        let defaultOption = document.createElement('option');
+        defaultOption.text = '景品を選択してください';
+        defaultOption.value = '';
+        select.appendChild(defaultOption);
+
+        // データの各要素に対してオプションを作成
+        data.forEach((item, index) => {
+            if (item && item.length > 0) {
+                let option = document.createElement('option');
+                option.value = index;
+                option.text = item[0];
+                select.appendChild(option);
+            }
+        });
+
+        // セレクトボックスをコンテナに追加
+        container.appendChild(select);
+        select.addEventListener('change', createSelectBox_num3);
+    } else {
+        container.textContent = "データがセットされていません。";
+    }
+}
+
+//セレクトボックス生成3(個数)
+/* function createSelectBox_num3() {
+    let container = document.getElementById('selectBoxContainer_num3');
+    container.innerHTML = ''; // 既存のコンテンツをクリア
+
+    let select0 = document.getElementById('prizeSelect_prize3');
+    let selectedIndex = select0.value;
+
+    // セレクトボックスを作成
+    let select = document.createElement('select');
+    select.id = 'prizeSelect_num3';
+
+    // デフォルトのオプションを追加
+    let defaultOption = document.createElement('option');
+    defaultOption.text = '個数を選択してください';
+    defaultOption.value = '';
+    select.appendChild(defaultOption);
+        
+    //商品の選択をしていた場合，対応する個数の選択肢を出す．
+    if (selectedIndex !== '' && data[selectedIndex] && data[selectedIndex].length > 1) {
+        let maxNumber = parseInt(data[selectedIndex][1]);
+        // 0からmaxNumberまでのオプションを作成
+        for (let i = 0; i <= maxNumber; i++) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.text = i.toString();
+            select.appendChild(option);
+        }
+    }
+    // セレクトボックスをコンテナに追加
+    container.appendChild(select);
+} */
+
+//セレクトボックス生成3(回数)
+function createSelectBox_num3() {
+    let container = document.getElementById('selectBoxContainer_num3');
+    container.innerHTML = ''; // 既存のコンテンツをクリア
+
+    let select0 = document.getElementById('prizeSelect_prize3');
+    let selectedIndex = select0.value;
+
+    // セレクトボックスを作成
+    let select = document.createElement('select');
+    select.id = 'prizeSelect_num3';
+
+    // デフォルトのオプションを追加
+    let defaultOption = document.createElement('option');
+    defaultOption.text = '希望する期待値を選択してください';
+    defaultOption.value = '';
+    select.appendChild(defaultOption);
+        
+    //商品の選択をしていた場合，希望する期待値の選択肢を出す．
+    if (selectedIndex !== '' && data[selectedIndex] && data[selectedIndex].length > 1) {
+        let maxNumber = 100;
+        // 0からmaxNumberまでのオプションを作成
+        for (let i = 1; i <= maxNumber; i++) {
+            let option = document.createElement('option');
+            option.value = i;
+            option.text = i.toString();
+            select.appendChild(option);
+        }
+    }
+    // セレクトボックスをコンテナに追加
+    container.appendChild(select);
 }
 
 //期待値から回数計算
-function num() {
+function numTimes() {
+    if (data.length !== 0) {
+        //希望する期待値取得
+        let expVal3 = document.getElementById('prizeSelect_num3').selectedIndex;
+        console.log(expVal3);
+        
+        //選択した商品名取得
+        let prize3 = document.getElementById('prizeSelect_prize3').selectedIndex;
+        let prizeName3 = document.getElementById('prizeSelect_prize3').options[prize3].textContent;
+        console.log(prizeName3);
+        
+        //選択した商品の個数を取得
+        let prizeTd3 = document.querySelector(`td[data-name='${prizeName3+3}']`);
+        let numPrize3 = Number(prizeTd3.textContent);
+        console.log(numPrize3);
 
+        //計算
+        let x = 1;
+        let count = 0;
+        let rate;
+        do {
+            x = 1;
+            count++;
+            for (let i = 0; i < count; i++) {
+                x *= (sum - numPrize3 - i) / (sum - i)
+            }
+            rate = (1 - x) * 100;
+            console.log(rate);
+        } while (rate < expVal3);
+        
+        //結果表示
+        let resultText3 = document.getElementById("resultText3");
+        resultText3.style.visibility = 'visible';
+        let numTimes_result = document.getElementById("numTimesResult");
+        numTimes_result.textContent = count;
+        let expValShow = document.getElementById("expVal");
+        expValShow.textContent = expVal3;
+    } else {
+        alert("データをセットしてください。");
+    }
+}
+
+function resultText3_hidden() {
+    let resultText3 = document.getElementById("resultText3");
+    resultText3.style.visibility = 'hidden';
 }
 
 //初期化関数
