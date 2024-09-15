@@ -529,7 +529,7 @@ function createSelectBox_num3() {
 
     // デフォルトのオプションを追加
     let defaultOption = document.createElement('option');
-    defaultOption.text = '希望する期待値を選択してください';
+    defaultOption.text = '希望する確率を選択してください';
     defaultOption.value = '';
     select.appendChild(defaultOption);
         
